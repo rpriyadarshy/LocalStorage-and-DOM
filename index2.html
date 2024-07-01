@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // index.html
+const todoInput = document.querySelector('#todoInput');
+const prioritySelect = document.querySelector('#prioritySelect');
+const addTodoButton = document.querySelector('#addTodoButton');
+const todoList = document.querySelector('#todoList');
+
+let todos = JSON.parse(localStorage.getItem('todos')) || [];
+let archive = JSON.parse(localStorage.getItem('archive')) || [];
+
+function renderTodoList() {
+  todoList.innerHTML = '';
+  todos.forEach((todo, index) => {
+    const todoItem = document.createElement('tr');
+    todoItem.innerHTML = `
+      <td>${todo.title}</td>
+      <td style="background-color: ${todo.priority === 'high' ? 'rgb(255, 0, 0)' : todo.priority === 'medium' ? 'rgb(255, 255, 0)' : ''}">${todo.priority}</td>
+      <td>
+        <button class="toggle" data-index="${index}">${todo.status}</button>
+      </td>
+      <td>
+        <button class="archiveBtn delete-button" data-index="${index}">Archive</button>
+      </td>
+    `;
+    todoList.appendChild(todoItem);
+  });
+
+  // Add event listeners for toggle and archive buttons
+  const toggleButtons = todoList.querySelectorAll('.toggle');
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', handleToggleStatus);
+  });
+
+  const archiveButtons = todoList.querySelectorAll('.archiveBtn');
+  archiveButtons.forEach(button => {
+    button.addEventListener('click', handleArchiveTodo);
+  });
+}
+
+function addTodo() {
+  const title = todoInput.value.trim();
+  const priority = prioritySelect.value;
+  if (title === '') {
+    alert('Todo cannot be empty!');
+    return;
+  }
+  const todo = { title, priority, status: 'Pending' };
+  todos.push(todo);
+  localStorage.setItem('todos', JSON.stringify(todos));
+  todoInput.value = '';
+  renderTodoList();
+}
+
+function handleToggleStatus(event) {
+  const index = parseInt(event.target.dataset.index);
+  todos[index].status = todos[index].status === 'Pending' ? 'Completed' : 'Pending';
+  localStorage.setItem('todos', JSON.stringify(todos));
+  renderTodoList();
+}
+
+function handleArchiveTodo(event) {
+  const index = parseInt(event.target.dataset.index);
+  const archivedTodo = todos.splice(index, 1)[0];
+  archive.push(archivedTodo);
+  localStorage.setItem('todos', JSON.stringify(todos));
+  localStorage.setItem('archive', JSON.stringify(archive));
+  renderTodoList();
+}
+
+addTodoButton.addEventListener('click', addTodo);
+
+renderTodoList();
+
+
+// archive.html
+const archiveTodoList = document.querySelector('#archiveTodoList');
+const priorityFilter = document.querySelector('#priorityFilter');
+const statusFilter = document.querySelector('#statusFilter');
+
+function renderArchiveTodoList() {
+  archiveTodoList.innerHTML = '';
+  const filteredArchive = archive.filter(todo => {
+    if (priorityFilter.value !== 'all' && todo.priority !== priorityFilter.value) {
+      return false;
+    }
+    if (statusFilter.value !== 'all' && todo.status !== statusFilter.value) {
+      return false;
+    }
+    return true;
+  });
+
+  filteredArchive.forEach((todo, index) => {
+    const todoItem = document.createElement('tr');
+    todoItem.innerHTML = `
+      <td>${todo.title}</td>
+      <td style="background-color: ${todo.priority === 'high' ? 'rgb(255, 0, 0)' : todo.priority === 'medium' ? 'rgb(255, 255, 0)' : ''}">${todo.priority}</td>
+      <td>
+        <button class="restoreBtn" data-index="${index}">${todo.status}</button>
+      </td>
+      <td>
+        <button class="deleteBtn delete-button" data-index="${index}">Delete</button>
+      </td>
+    `;
+    archiveTodoList.appendChild(todoItem);
+  });
+
+  // Add event listeners for restore and delete buttons
+  const restoreButtons = archiveTodoList.querySelectorAll('.restoreBtn');
+  restoreButtons.forEach(button => {
+    button.addEventListener('click', handleRestoreTodo);
+  });
+
+  const deleteButtons = archiveTodoList.querySelectorAll('.deleteBtn');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', handleDeleteTodo);
+  });
+}
+
+function handleRestoreTodo(event) {
+  const index = parseInt(event.target.dataset.index);
+  const restoredTodo = archive.splice(index, 1)[0];
+  todos.push(restoredTodo);
+  localStorage.setItem('todos', JSON.stringify(todos));
+  localStorage.setItem('archive', JSON.stringify(archive));
+  renderArchiveTodoList();
+}
+
+function handleDeleteTodo(event) {
+  const index = parseInt(event.target.dataset.index);
+  archive.splice(index, 1);
+  localStorage.setItem('archive', JSON.stringify(archive));
+  renderArchiveTodoList();
+}
+
+priorityFilter.addEventListener('change', renderArchiveTodoList);
+statusFilter.addEventListener('change', renderArchiveTodoList);
+
+renderArchiveTodoList();
+</script>
+</html>
