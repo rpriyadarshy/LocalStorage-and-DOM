@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // Get the user data from local storage or use the initial array
+let user = JSON.parse(localStorage.getItem('user')) || [
+  // ... initial user data array ...
+];
+
+// Function to render user cards
+function renderUserCards() {
+  const userCardsContainer = document.getElementById('user-cards');
+  userCardsContainer.innerHTML = ''; // Clear existing cards
+
+  user.forEach(user => {
+    // Create card HTML
+    const card = document.createElement('div');
+    card.classList.add('user-card');
+    card.innerHTML = `
+      <h3>${user.name}</h3>
+      <p>Username: ${user.username}</p>
+      <p>Email: ${user.email}</p>
+      <button class="add-to-cart" data-user-id="${user.id}">Add to Cart</button>
+      <button class="delete-user" data-user-id="${user.id}">Delete</button>
+    `;
+
+    // Add event listeners for buttons
+    card.querySelector('.add-to-cart').addEventListener('click', addToCart);
+    card.querySelector('.delete-user').addEventListener('click', deleteUser);
+
+    userCardsContainer.appendChild(card);
+  });
+}
+
+// ... (Add to Cart, Delete User functions, search functionality)
+
+// Initialize rendering of user cards
+renderUserCards();
+
+// Update local storage when necessary
+localStorage.setItem('user', JSON.stringify(user));
+
+
+// Get cart data from local storage
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+// Function to render cart items
+function renderCartItems() {
+  const cartContainer = document.getElementById('cart');
+  cartContainer.innerHTML = ''; // Clear existing cart items
+
+  cart.forEach(user => {
+    // Create cart item HTML
+    // ... similar to the user card structure ... 
+    cartContainer.appendChild(cartItem);
+  });
+}
+
+// ... (Delete Cart Item function)
+
+// Initialize rendering of cart items
+renderCartItems();
+
+// Update local storage when necessary
+localStorage.setItem('cart', JSON.stringify(cart));
+</script>
+</html>
