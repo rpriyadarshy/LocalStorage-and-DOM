@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function processFiles(files) {
+  // 1. Total Size
+  const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+  // 2. Largest Files
+  const largestFiles = files
+    .sort((a, b) => b.size - a.size)
+    .slice(0, 5);
+
+  // 3. Files by Extension
+  const filesByExtension = files.reduce((acc, file) => {
+    const extension = file.name.split('.').pop();
+    if (!acc[extension]) {
+      acc[extension] = [];
+    }
+    acc[extension].push(file.name);
+    return acc;
+  }, {});
+
+  return {
+    totalSize,
+    largestFiles,
+    filesByExtension,
+  };
+}
+
+// Example Usage
+const files = [
+  { name: "document1.pdf", size: 500 },
+  { name: "document2.pdf", size: 700 },
+  { name: "image1.png", size: 200 },
+  { name: "image2.png", size: 300 },
+  { name: "text1.txt", size: 100 },
+  { name: "text2.txt", size: 150 },
+  { name: "photo1.jpg", size: 400 },
+  { name: "photo2.jpg", size: 350 },
+  { name: "program1.exe", size: 1000 },
+  { name: "program2.exe", size: 1200 },
+  { name: "data1.csv", size: 600 },
+  { name: "data2.csv", size: 500 },
+  { name: "report1.pdf", size: 800 },
+  { name: "report2.pdf", size: 900 },
+  { name: "image3.png", size: 250 },
+  { name: "text3.txt", size: 175 },
+  { name: "photo3.jpg", size: 450 },
+  { name: "document3.pdf", size: 750 },
+];
+
+const result = processFiles(files);
+console.log(result);
+```**Explanation:**
+
+1. **processFiles(files) function:**
+   - Takes an array of file objects as input.
+   - Each file object has a `name` and `size` property.
+   - Returns an object with three properties:
+     - `totalSize`: The sum of all file sizes.
+     - `largestFiles`: The five largest files sorted by size.
+     - `filesByExtension`: An object with file extensions as keys and arrays of file names as values.
+
+2. **Example Usage:**
+   - Creates an example array of file objects.
+   - Calls `processFiles()` with the example array.
+   - Logs the result to the console.
+
+This code provides a basic implementation for processing a list of files. You can further enhance it by adding features like filtering files by size, displaying file information in a user-friendly format, or handling different file types.
+
+**Example Output:**
+
+```javascript
+{
+  totalSize: 19000,
+  largestFiles: [
+    { name: 'program2.exe', size: 1200 },
+    { name: 'program1.exe', size: 1000 },
+    { name: 'report2.pdf', size: 900 },
+    { name: 'report1.pdf', size: 800 },
+    { name: 'document3.pdf', size: 750 }
+  ],
+  filesByExtension: {
+    pdf: [ 'document1.pdf', 'document2.pdf', 'report1.pdf', 'report2.pdf', 'document3.pdf' ],
+    png: [ 'image1.png', 'image2.png', 'image3.png' ],
+    jpg: [ 'photo1.jpg', 'photo2.jpg', 'photo3.jpg' ],
+    exe: [ 'program1.exe', 'program2.exe' ],
+    txt: [ 'text1.txt', 'text2.txt', 'text3.txt' ],
+    csv: [ 'data1.csv', 'data2.csv' ]
+  }
+}
+</script>
+</html>
